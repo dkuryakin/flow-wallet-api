@@ -166,6 +166,7 @@ func (l *Listener) Start() *Listener {
 						// Unable to connect to chain, pause system.
 						if l.systemService != nil {
 							entry.Warn("Unable to connect to chain, pausing system")
+                                                        entry.Warn(err)
 							if err := l.systemService.Pause(); err != nil {
 								entry.
 									WithFields(log.Fields{"error": err}).
