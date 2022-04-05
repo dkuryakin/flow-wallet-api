@@ -98,7 +98,10 @@ func runServer(cfg *configs.Config) {
 	transactionStore := transactions.NewGormStore(db)
 	tokenStore := tokens.NewGormStore(db)
 
-	systemService := system.NewService(systemStore)
+	systemService := system.NewService(
+		systemStore,
+		system.WithPauseDuration(cfg.PauseDuration),
+	)
 
 	// Create a worker pool
 	wp := jobs.NewWorkerPool(
@@ -107,6 +110,10 @@ func runServer(cfg *configs.Config) {
 		cfg.WorkerCount,
 		jobs.WithJobStatusWebhook(cfg.JobStatusWebhookUrl, cfg.JobStatusWebhookTimeout),
 		jobs.WithSystemService(systemService),
+		jobs.WithMaxJobErrorCount(cfg.MaxJobErrorCount),
+		jobs.WithDbJobPollInterval(cfg.DBJobPollInterval),
+		jobs.WithAcceptedGracePeriod(cfg.AcceptedGracePeriod),
+		jobs.WithReSchedulableGracePeriod(cfg.ReSchedulableGracePeriod),
 	)
 
 	log.Info("Started workerpool")
