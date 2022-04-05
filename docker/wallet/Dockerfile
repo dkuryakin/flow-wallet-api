@@ -26,7 +26,7 @@ WORKDIR /dist
 
 RUN cp /build/main .
 
-FROM scratch
+FROM alpine
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /dist/main /
