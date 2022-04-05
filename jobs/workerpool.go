@@ -22,20 +22,20 @@ var (
 
 	// maxJobErrorCount is the maximum number of times a Job can be tried to
 	// execute before considering it completely failed.
-	defaultMaxJobErrorCount = 10
+	defaultMaxJobErrorCount = 3
 
 	// Poll DB for new schedulable jobs every 30s.
-	defaultDBJobPollInterval = 30 * time.Second
+	defaultDBJobPollInterval = 5 * time.Second
 
 	// Grace time period before re-scheduling jobs that are in state INIT or
 	// ACCEPTED. These are jobs where the executor processing has been
 	// unexpectedly disrupted (such as bug, dead node, disconnected
 	// networking etc.).
-	defaultAcceptedGracePeriod = 3 * time.Minute
+	defaultAcceptedGracePeriod = 15 * time.Second
 
 	// Grace time period before re-scheduling jobs that are up for immediate
 	// restart (such as NO_AVAILABLE_WORKERS or ERROR).
-	defaultReSchedulableGracePeriod = 1 * time.Minute
+	defaultReSchedulableGracePeriod = 5 * time.Second
 )
 
 type ExecutorFunc func(ctx context.Context, j *Job) error
