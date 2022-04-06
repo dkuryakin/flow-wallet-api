@@ -75,7 +75,7 @@ func runServer(cfg *configs.Config) {
 	fc, err := client.New(
             cfg.AccessAPIHost,
             grpc.WithInsecure(),
-            grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(8388608)),
+            grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(16777216)),
         )
 	if err != nil {
 		log.Fatal(err)
