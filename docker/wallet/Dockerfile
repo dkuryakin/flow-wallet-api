@@ -1,4 +1,4 @@
-FROM golang:alpine AS builder
+FROM golang:alpine
 
 RUN apk update && apk add --no-cache \
   ca-certificates \
@@ -22,13 +22,8 @@ COPY . .
 
 RUN ./build.sh
 
-WORKDIR /dist
+WORKDIR /
 
 RUN cp /build/main .
-
-FROM alpine
-
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /dist/main /
 
 ENTRYPOINT ["/main"]
