@@ -372,7 +372,7 @@ func (wp *WorkerPool) process(job *Job) error {
 			return err
 		}
 
-		if job.ExecCount > wp.maxJobErrorCount || errors.Is(err, ErrPermanentFailure) {
+		if job.ExecCount > wp.maxJobErrorCount || errors.Is(err, ErrPermanentFailure) || strings.Contains(err.String(), "transaction is expired") {
 			job.State = Failed
 		} else {
 			job.State = Error
