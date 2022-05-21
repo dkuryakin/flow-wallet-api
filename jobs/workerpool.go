@@ -366,6 +366,9 @@ func (wp *WorkerPool) process(job *Job) error {
 		return nil
 	}
 
+	txExpired := false
+	txExpiredMsg := ""
+	
 	if err := executor(wp.context, job); err != nil {
 		// Check for chain connection errors
 		if wallet_errors.IsChainConnectionError(err) {
@@ -373,7 +376,10 @@ func (wp *WorkerPool) process(job *Job) error {
 			return err
 		}
 
-		if job.ExecCount > wp.maxJobErrorCount || errors.Is(err, ErrPermanentFailure) || strings.Contains(err.Error(), "transaction is expired") {
+		txExpired = strings.Contains(err.Error(), "transaction is expired")
+		txExpiredMsg = err.Error()
+		
+		if job.ExecCount > wp.maxJobErrorCount || errors.Is(err, ErrPermanentFailure) || txExpired {
 			job.State = Failed
 		} else {
 			job.State = Error
@@ -403,6 +409,11 @@ func (wp *WorkerPool) process(job *Job) error {
 		}
 	}
 
+	if txExpired {
+		entry.Warn("TX EXPIRED: " + txExpiredMsg)
+		return err
+	}
+	
 	return nil
 }
 
