@@ -368,6 +368,7 @@ func (wp *WorkerPool) process(job *Job) error {
 
 	txExpired := false
 	txExpiredMsg := ""
+	txExpiredErr := errors.New("")
 	
 	if err := executor(wp.context, job); err != nil {
 		// Check for chain connection errors
@@ -378,6 +379,7 @@ func (wp *WorkerPool) process(job *Job) error {
 
 		txExpired = strings.Contains(err.Error(), "transaction is expired")
 		txExpiredMsg = err.Error()
+		txExpiredErr = err
 		
 		if job.ExecCount > wp.maxJobErrorCount || errors.Is(err, ErrPermanentFailure) || txExpired {
 			job.State = Failed
@@ -411,7 +413,7 @@ func (wp *WorkerPool) process(job *Job) error {
 
 	if txExpired {
 		entry.Warn("TX EXPIRED: " + txExpiredMsg)
-		return err
+		return txExpiredErr
 	}
 	
 	return nil
