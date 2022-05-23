@@ -323,6 +323,11 @@ func (wp *WorkerPool) startWorkers() {
 }
 
 func (wp *WorkerPool) tryEnqueue(job *Job, block bool) bool {
+	entry := job.logEntry(wp.logger.WithFields(log.Fields{
+		"package":  "jobs",
+		"function": "WorkerPool.tryEnqueue",
+	}))
+	entry.Warn(fmt.Sprintf("ENQUEUE JOB: %+v", job))
 	if block {
 		select {
 		case <-wp.stopChan:
@@ -403,12 +408,6 @@ func (wp *WorkerPool) process(job *Job) error {
 		return fmt.Errorf("error while updating database entry: %w", err)
 	}
 
-	if txExpired {
-		entry.Warn("TX EXPIRED: " + txExpiredMsg)
-		entry.Warn(fmt.Sprintf("TX EXPIRED JOB: %+v", job))
-		return txExpiredErr
-	}
-
 	if (job.State == Failed || job.State == Complete) && job.ShouldSendNotification && wp.notificationConfig.ShouldSendJobStatus() {
 		if err := ScheduleJobStatusNotification(wp, job); err != nil {
 			entry.
@@ -416,7 +415,13 @@ func (wp *WorkerPool) process(job *Job) error {
 				Warn("Could not schedule a status update notification for job")
 		}
 	}
-	
+
+	if txExpired {
+		entry.Warn("TX EXPIRED: " + txExpiredMsg)
+		entry.Warn(fmt.Sprintf("TX EXPIRED JOB: %+v", job))
+		return txExpiredErr
+	}
+
 	return nil
 }
 
