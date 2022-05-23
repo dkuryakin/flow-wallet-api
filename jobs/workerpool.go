@@ -297,7 +297,8 @@ func (wp *WorkerPool) startWorkers() {
                     "function": "WorkerPool.startWorkers.goroutine",
                 }))
                 if (job.State == Failed) {
-                    entry.Warn(fmt.Sprintf("SKIP JOB: %+v", job))
+                    //TODO: A lot of retries in that point for some reason. Debug it later.
+                    //entry.Warn(fmt.Sprintf("SKIP JOB: %+v", job))
                     continue
                 }
 
