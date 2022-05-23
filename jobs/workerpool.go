@@ -413,6 +413,7 @@ func (wp *WorkerPool) process(job *Job) error {
 
 	if txExpired {
 		entry.Warn("TX EXPIRED: " + txExpiredMsg)
+		entry.Warn(fmt.Sprintf("TX EXPIRED JOB: %+v", job))
 		return txExpiredErr
 	}
 	
