@@ -50,6 +50,7 @@ func (s *GormStore) SchedulableJobs(acceptedGracePeriod, reSchedulableGracePerio
 	tReschedulable := t0.Add(-1 * reSchedulableGracePeriod)
 
 	err = s.db.
+		Debug().
 		Where("state IN ? AND updated_at < ?", []string{string(Init), string(Accepted)}, tAccepted).
 		Or("state IN ? AND updated_at < ?", []string{string(Error), string(NoAvailableWorkers)}, tReschedulable).
 		Model(&Job{}).

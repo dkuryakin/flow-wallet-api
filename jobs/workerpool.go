@@ -323,11 +323,11 @@ func (wp *WorkerPool) startWorkers() {
 }
 
 func (wp *WorkerPool) tryEnqueue(job *Job, block bool) bool {
-	entry := job.logEntry(wp.logger.WithFields(log.Fields{
-		"package":  "jobs",
-		"function": "WorkerPool.tryEnqueue",
-	}))
-	entry.Warn(fmt.Sprintf("ENQUEUE JOB: %+v", job))
+// 	entry := job.logEntry(wp.logger.WithFields(log.Fields{
+// 		"package":  "jobs",
+// 		"function": "WorkerPool.tryEnqueue",
+// 	}))
+// 	entry.Warn(fmt.Sprintf("ENQUEUE JOB: %+v", job))
 	if block {
 		select {
 		case <-wp.stopChan:
