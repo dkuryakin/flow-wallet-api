@@ -242,6 +242,8 @@ func (wp *WorkerPool) startDBJobScheduler() {
 	go func() {
 		var restTime time.Duration
 
+		skip := make(map[string]bool)
+
 	jobPoolLoop:
 		for {
 			select {
@@ -273,7 +275,11 @@ func (wp *WorkerPool) startDBJobScheduler() {
 			}
 
 			for _, j := range jobs {
-				wp.tryEnqueue(&j, true)
+			    k := j.String()
+			    if val, ok := skip[k]; !ok || !val {
+                    wp.tryEnqueue(&j, true)
+                    skip[k] = true
+                }
 			}
 
 			elapsed := time.Since(begin)
