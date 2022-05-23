@@ -333,7 +333,7 @@ func (wp *WorkerPool) startWorkers() {
 }
 
 func (wp *WorkerPool) tryEnqueue(job *Job, block bool) bool {
-    if job.state == Failed {
+    if job.State == Failed {
         entry := job.logEntry(wp.logger.WithFields(log.Fields{
             "package":  "jobs",
             "function": "WorkerPool.tryEnqueue",
