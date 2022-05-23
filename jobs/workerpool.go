@@ -275,7 +275,7 @@ func (wp *WorkerPool) startDBJobScheduler() {
 			}
 
 			for _, j := range jobs {
-			    k := j.String()
+			    k := j.ID.String()
 			    if val, ok := skip[k]; !ok || !val {
                     wp.tryEnqueue(&j, true)
                     skip[k] = true
