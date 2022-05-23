@@ -292,10 +292,19 @@ func (wp *WorkerPool) startWorkers() {
 					break
 				}
 
+                entry := job.logEntry(wp.logger.WithFields(log.Fields{
+                    "package":  "jobs",
+                    "function": "WorkerPool.startWorkers.goroutine",
+                }))
+                if (job.State == Failed) {
+                    entry.Warn(fmt.Sprintf("SKIP JOB: %+v", job))
+                    continue
+                }
+
 				if err := wp.process(job); err != nil {
 					// Handle critical processing errors
 
-					entry := job.logEntry(wp.logger.WithFields(log.Fields{
+					entry = job.logEntry(wp.logger.WithFields(log.Fields{
 						"package":  "jobs",
 						"function": "WorkerPool.startWorkers.goroutine",
 						"error":    err,
