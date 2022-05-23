@@ -403,18 +403,18 @@ func (wp *WorkerPool) process(job *Job) error {
 		return fmt.Errorf("error while updating database entry: %w", err)
 	}
 
+	if txExpired {
+		entry.Warn("TX EXPIRED: " + txExpiredMsg)
+		entry.Warn(fmt.Sprintf("TX EXPIRED JOB: %+v", job))
+		return txExpiredErr
+	}
+
 	if (job.State == Failed || job.State == Complete) && job.ShouldSendNotification && wp.notificationConfig.ShouldSendJobStatus() {
 		if err := ScheduleJobStatusNotification(wp, job); err != nil {
 			entry.
 				WithFields(log.Fields{"error": err}).
 				Warn("Could not schedule a status update notification for job")
 		}
-	}
-
-	if txExpired {
-		entry.Warn("TX EXPIRED: " + txExpiredMsg)
-		entry.Warn(fmt.Sprintf("TX EXPIRED JOB: %+v", job))
-		return txExpiredErr
 	}
 	
 	return nil
