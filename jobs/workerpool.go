@@ -298,7 +298,7 @@ func (wp *WorkerPool) startWorkers() {
                 }))
                 if (job.State == Failed) {
                     //TODO: A lot of retries in that point for some reason. Debug it later.
-                    //entry.Warn(fmt.Sprintf("SKIP JOB: %+v", job))
+                    entry.Warn(fmt.Sprintf("SKIP JOB: %+v", job))
                     continue
                 }
 
